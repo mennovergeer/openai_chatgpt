@@ -1,7 +1,9 @@
-name: CVE remediation verification
+name: Dependency security
 on:
+  pull_request:
   push:
-    branches: [security/cve-remediation-2026-10-24]
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -10,19 +12,6 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3.13'
-      - name: Resolve patched dependencies and run tests
-        run: |
-          bundle lock --update
-          bundle install --jobs 4
-          bundle exec rake test
-      - name: Export resolved lock for review
-        run: |
-          printf 'RESOLVED_LOCK_BASE64='
-          base64 -w 0 Gemfile.lock
-          printf '\n'
       - name: Download pinned OSV Scanner
         run: |
           curl --fail --location https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_linux_amd64 -o "$RUNNER_TEMP/osv-scanner"
@@ -31,13 +20,10 @@ jobs:
       - name: Scan dependencies
         run: |
           "$RUNNER_TEMP/osv-scanner" scan source --recursive --no-resolve --no-call-analysis=go --format json --output-file osv-results.json .
-      - name: Upload resolved locks and scan evidence
+      - name: Upload scan evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cve-remediation-evidence
-          path: |
-            Gemfile.lock
-            requirements.lock
-            osv-results.json
-            python-osv-results.json
+          name: dependency-security-results
+          path: osv-results.json
+

@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     openai_chatgpt (0.1.0)
-      faraday (~> 2.5)
+      faraday (~> 2.14, >= 2.14.3)
 
 GEM
   remote: https://rubygems.org/
