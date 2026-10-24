@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.extra_rdoc_files = %w[README.md]
 
-  spec.add_dependency("faraday", "~> 2.5")
+  spec.add_dependency("faraday", "~> 2.14", ">= 2.14.3")
   spec.add_development_dependency("rubocop", "~> 1.35")
   spec.metadata["rubygems_mfa_required"] = "true"
 end
